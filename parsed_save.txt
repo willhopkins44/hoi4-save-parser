@@ -1,5 +1,5 @@
-{"p":"GER"}
-ideology:fascism
+{"player":"'GER'"}
+{"i":fascism
 date:"1936.1.1.12"
-{"d":"normal"}
-tutorial:no
+{"difficulty":"'normal'"}
+{"t":no

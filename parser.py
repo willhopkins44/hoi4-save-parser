@@ -5,18 +5,24 @@ from pyparsing import replaceWith, Suppress, restOfLine, ZeroOrMore
 
 def generateJSONTokens():
     stringDblQuotes = Word(alphas).addParseAction(
-        lambda s, l, t: (t := ("{\"" + s[l] + "\""))
+        lambda s, l, t: (t := ("{\"" + t[0] + "\""))
     ) + Literal("=").addParseAction(
         replaceWith(":")
-    ) + "\"" + Word(alphas) + Literal("\"").addParseAction(
-        lambda s, l, t: (t := (s[l] + "}"))
+    ) + Literal("\"") + Word(alphas).addParseAction(
+        lambda s, l, t: (t := ("\'" + t[0] + "\'"))
+    ) + Literal("\"").addParseAction(
+        replaceWith("\"}")
     ) + ~Literal("=")
 
     stringDblQuotes = stringDblQuotes.setParseAction(lambda s, l, t: t.append('\n'))
 
     # lambda explained: s[l] instead of t is string[location] instead of token to avoid maximum recursion errors
 
-    stringNoQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + Word(alphas) + ~Literal("=")
+    stringNoQuotes = Word(alphas).addParseAction(
+        lambda s, l, t: (t := ("{\"" + s[l] + "\""))
+    ) + Literal("=").addParseAction(
+        replaceWith(":")
+    ) + Word(alphas) + ~Literal("=")
     stringNoQuotes = stringNoQuotes.setParseAction(lambda s, l, t: t.append('\n'))
 
     dateDblQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + "\"" + Word(nums) + "." + Word(nums) + "." + Word(nums) + "." + Word(nums) + "\""
