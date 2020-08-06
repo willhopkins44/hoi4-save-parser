@@ -4,10 +4,19 @@ from pyparsing import replaceWith, Suppress, restOfLine, ZeroOrMore
 
 
 def generateJSONTokens():
-    stringDblQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + "\"" + Word(alphas) + "\""
+    stringDblQuotes = Word(alphas).addParseAction(
+        lambda s, l, t: (t := ("{\"" + s[l] + "\""))
+    ) + Literal("=").addParseAction(
+        replaceWith(":")
+    ) + "\"" + Word(alphas) + Literal("\"").addParseAction(
+        lambda s, l, t: (t := (s[l] + "}"))
+    ) + ~Literal("=")
+
     stringDblQuotes = stringDblQuotes.setParseAction(lambda s, l, t: t.append('\n'))
 
-    stringNoQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + Word(alphas)
+    # lambda explained: s[l] instead of t is string[location] instead of token to avoid maximum recursion errors
+
+    stringNoQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + Word(alphas) + ~Literal("=")
     stringNoQuotes = stringNoQuotes.setParseAction(lambda s, l, t: t.append('\n'))
 
     dateDblQuotes = Word(alphas) + Literal("=").addParseAction(replaceWith(":")) + "\"" + Word(nums) + "." + Word(nums) + "." + Word(nums) + "." + Word(nums) + "\""

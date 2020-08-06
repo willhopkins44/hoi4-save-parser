@@ -4,3 +4,10 @@ date="1936.1.1.12"
 difficulty="normal"
 #version="Husky v1.9.3 (a7a4)"
 tutorial=no
+#player_countries={
+#	GER={
+#		user="Silence"
+#		country_leader=yes
+#		id=1
+#	}
+#}
