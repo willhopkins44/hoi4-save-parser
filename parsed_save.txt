@@ -1,0 +1,5 @@
+player="GER"
+ideology=fascism
+date="1936.1.1.12"
+difficulty="normal"
+tutorial=no
