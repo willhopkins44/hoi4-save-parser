@@ -38,25 +38,22 @@ def generateJSONTokens():
     )
     dateDblQuotes = dateDblQuotes.setParseAction(lambda s, l, t: t.append(','))
 
-    # paradoxObject = Word(alphas).addParseAction(
-    #     lambda s, l, t: (t := ("\"" + t[0] + "\""))
-    # ) + Literal("=").addParseAction(
-    #     replaceWith(":")
-    # ) + "{" + OneOrMore(stringDblQuotes ^ stringNoQuotes)
-
     # https://stackoverflow.com/questions/55909620/capturing-block-over-multiple-lines-using-pyparsing
 
-    paradoxObject = Word(alphas).addParseAction(
+    paradoxObject = Word(alphas + "_").addParseAction(
         lambda s, l, t: (t := ("\"" + t[0] + "\""))
     ) + Literal("=").addParseAction(
         replaceWith(":")
     ) + "{" + Optional(ZeroOrMore(stringDblQuotes)) & Optional(ZeroOrMore(stringNoQuotes)) + "}"
+    paradoxObject = paradoxObject.setParseAction(lambda s, l, t: t.append(','))
 
-    paradoxObjectRecursive = Word(alphas).addParseAction(
+    paradoxObject = Word(alphas + "_").addParseAction(
         lambda s, l, t: (t := ("\"" + t[0] + "\""))
     ) + Literal("=").addParseAction(
         replaceWith(":")
     ) + "{" + Optional(ZeroOrMore(stringDblQuotes)) & Optional(ZeroOrMore(stringNoQuotes) & Optional(ZeroOrMore(paradoxObject))) + "}"
+
+    paradoxObject = paradoxObject.setParseAction(lambda s, l, t: t.append(','))
 
     # Problem with the "or" (^) operator - it takes the longest match it finds and dumps the rest
     # Use "optional" operator instead
@@ -64,7 +61,7 @@ def generateJSONTokens():
     # comment = Suppress("#") + Suppress(restOfLine) - PROBABLY UNNECESSARY
     comment = "#" + restOfLine
 
-    save = ZeroOrMore(stringDblQuotes) & ZeroOrMore(stringNoQuotes) & ZeroOrMore(dateDblQuotes) & ZeroOrMore(paradoxObjectRecursive)
+    save = ZeroOrMore(stringDblQuotes) & ZeroOrMore(stringNoQuotes) & ZeroOrMore(dateDblQuotes) & ZeroOrMore(paradoxObject)
 
     save.ignore(comment)
 
