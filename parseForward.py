@@ -111,15 +111,14 @@ def write_JSON_to_file(file, jsonData):
     file.write(json.dumps(jsonData))
 
 
-# save_file = open("analysis.hoi4", "r", encoding="utf8")
-save_file = open("mock_save.txt", "r", encoding="utf8")
+save_file = open("analysis.hoi4", "r", encoding="utf8")
+# save_file = open("mock_save.txt", "r", encoding="utf8")
 
 output_file = open("parsed_save.json", "w")
-output_file_tokens = open("parsed_save_tokens.txt", "w")
 
 tokens = generate_JSON_tokens(save_file)
 jsonData = format_tokens_to_JSON(tokens)
 write_JSON_to_file(output_file, jsonData)
-output_file_tokens.write(str(tokens))
+# output_file_tokens.write(str(tokens))
 
 # print(generate_JSON_tokens(save_file))
