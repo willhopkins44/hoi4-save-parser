@@ -13,6 +13,7 @@ from pyparsing import alphanums, alphas8bit
 
 def generate_JSON_tokens(file):
     # file = preprocess(file)
+    # REMOVE HOI4txt from first line ^^
 
     EQ, LBRACE, RBRACE = map(Suppress, "={}")
     comment = Suppress("#") + Suppress(restOfLine)
