@@ -74,9 +74,9 @@ def format_item(list_struct):
     else:
         if is_phrase(list_struct[0]): # If the head is a phrase
             dic = tree()
-            for elem in list_struct:
+            for counter, elem in enumerate(list_struct):
                 (key, val) = convert_to_phrase(elem)
-                dic = insert_check_dup(key, val, dic)
+                dic = insert_check_dup(key, val, dic, counter)
             return dic
         else:
             values = []
@@ -85,12 +85,22 @@ def format_item(list_struct):
             return values
 
 
-def insert_check_dup(key, val, dic): # insert key, val into dictionary
+def insert_check_dup(key, val, dic, counter): # insert key, val into dictionary
     if key in dic:
         if isinstance(dic[key], list):
+            # print("list:", key)
             dic[key].append(format_item(val))
+            # dic[key] = [dic[key + "dupe" + str(counter)], format_item(val)]
         else:
-            dic[key] = [dic[key], format_item(val)]
+            # Duplicate
+            # print("not list:", key)
+            if key == "saved_event_target":
+                print(key)
+                print(dic)
+                print([dic[key], format_item(val)])
+            dic[key + "dupe" + str(counter)] = format_item(val)
+            # dic[key + "dupe" + str(counter)].append(format_item(val))
+            # dic[key] = [dic[key + "dupe" + str(counter)], format_item(val)]
     else:
         dic[key] = format_item(val)
     return dic
@@ -98,11 +108,11 @@ def insert_check_dup(key, val, dic): # insert key, val into dictionary
 
 def format_tokens_to_JSON(tokens):
     dic = tree()
-    for elem in tokens:
+    for counter, elem in enumerate(tokens):
         # For each item in the list of tokens, convert it to its key value pair
         # The value might be another list. This will be handled
         (key, val) = convert_to_phrase(elem)
-        dic = insert_check_dup(key, val, dic) # Insert key, value into dictionary
+        dic = insert_check_dup(key, val, dic, counter) # Insert key, value into dictionary
 
     return dic
 
