@@ -72,6 +72,7 @@ recursively_parse(jsonData)
 # outputFile = open("bundled_save.hoi4", "a", encoding="utf-8")
 # outputFile.write(saveTokens)
 with open("bundled_save.hoi4", "a", encoding="utf-8") as save:
+    save.write("HOI4txt\n")
     for token in saveTokens:
         # print(type(token), ":", token)
         save.write(token)

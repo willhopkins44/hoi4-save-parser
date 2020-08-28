@@ -17,6 +17,7 @@ def generate_JSON_tokens(file):
 
     EQ, LBRACE, RBRACE = map(Suppress, "={}")
     comment = Suppress("#") + Suppress(restOfLine)
+    hoi4txt = Suppress("HOI4txt")
 
     dblQuotedString.addParseAction(removeQuotes)
     dblQuotedString.addParseAction(
@@ -36,6 +37,7 @@ def generate_JSON_tokens(file):
 
     grammar = OneOrMore(Group(phrase))
     grammar.ignore(comment)
+    grammar.ignore(hoi4txt)
 
     tokens = grammar.parseFile(file, parseAll=True)
 
@@ -88,19 +90,10 @@ def format_item(list_struct):
 def insert_check_dup(key, val, dic, counter): # insert key, val into dictionary
     if key in dic:
         if isinstance(dic[key], list):
-            # print("list:", key)
             dic[key].append(format_item(val))
-            # dic[key] = [dic[key + "dupe" + str(counter)], format_item(val)]
         else:
             # Duplicate
-            # print("not list:", key)
-            if key == "saved_event_target":
-                print(key)
-                print(dic)
-                print([dic[key], format_item(val)])
             dic[key + "dupe" + str(counter)] = format_item(val)
-            # dic[key + "dupe" + str(counter)].append(format_item(val))
-            # dic[key] = [dic[key + "dupe" + str(counter)], format_item(val)]
     else:
         dic[key] = format_item(val)
     return dic
@@ -123,13 +116,9 @@ def write_JSON_to_file(file, jsonData):
 
 
 save_file = open("analysis.hoi4", "r", encoding="utf8")
-# save_file = open("mock_save.txt", "r", encoding="utf8")
 
 output_file = open("parsed_save.json", "w")
 
 tokens = generate_JSON_tokens(save_file)
 jsonData = format_tokens_to_JSON(tokens)
 write_JSON_to_file(output_file, jsonData)
-# output_file_tokens.write(str(tokens))
-
-# print(generate_JSON_tokens(save_file))
